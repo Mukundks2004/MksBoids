@@ -1,11 +1,8 @@
 let boids = [];
-const AlignConstant = 1.5;
-const CohesionConstant = 1;
-const SeparationConstant = 2;
 
 function setup() {
     createCanvas(600, 600);
-    for (let i = 0; i < 20; i++) {
+    for (let i = 0; i < 80; i++) {
         boids.push(new Boid());
     }
 }
