@@ -10,6 +10,13 @@ class Boid {
         this.position = createVector(random(width), random(height));
         this.velocity = p5.Vector.random2D();
         this.acceleration = createVector();
+        this.color = this.varyColour(color("orange"));
+    }
+
+    varyColour(baseColour) {
+        let sat = floor(saturation(baseColour)) + random(0, 0);
+        let light = floor(lightness(baseColour)) + random(-40, +20);
+        return `hsl(${floor(hue(baseColour))}, ${sat}%, ${light}%)`
     }
 
     wrap() {
@@ -67,7 +74,6 @@ class Boid {
         for (let boid of boids) {
             let displacement = p5.Vector.sub(this.position, boid.position);
             if (boid != this && displacement.mag() < radius) {
-                console.log(displacement);
                 separationVector.add(displacement.div(displacement.mag() ** 2));
                 neighbourCount++;
             }
@@ -84,7 +90,7 @@ class Boid {
     }
 
     cohere(boids) {
-        let cohereRadius = 50;
+        let cohereRadius = 100;
         let cohesiveVector = createVector();
         let neighbourCount = 0;
         for (let boid of boids) {
@@ -112,8 +118,9 @@ class Boid {
     }
 
     show() {
+        colorMode(HSB);
         strokeWeight(5);
-        stroke(255, 255, 255);
+        stroke(this.color);
         point(this.position.x, this.position.y);
     }
 }
