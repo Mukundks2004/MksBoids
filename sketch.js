@@ -1,8 +1,18 @@
-let boids = [];
+let boids;
 
 function setup() {
-    createCanvas(600, 600);
-    for (let i = 0; i < 120; i++) {
+    var container = createCanvas(600, 600);
+    container.parent('container');
+    let slider = document.getElementById("boidCountSlider");
+    slider.oninput = function() {
+        doSetupActions(slider.value);
+    }
+    doSetupActions(50);
+}
+
+function doSetupActions(boidCount) {
+    boids = [];
+    for (let i = 0; i < boidCount; i++) {
         boids.push(new Boid());
     }
 }
