@@ -1,16 +1,24 @@
-const maxEnergy = 0.2;
-const maxSpeed = 5;
+// const maxEnergy = 0.2;
+// const maxSpeed = 5;
 
 const AlignConstant = 1.5;
 const CohesionConstant = 1;
 const SeparationConstant = 2;
 
 class Boid {
-    constructor() {
+    constructor(alignStrength, cohesionStrength, separationStrength, alignRadius, cohesionRadius, separationRadius, maxEnergy, maxSpeed) {
         this.position = createVector(random(width), random(height));
         this.velocity = p5.Vector.random2D();
         this.acceleration = createVector();
         this.color = this.varyColour(color("orange"));
+        this.alignStrength = alignStrength;
+        this.cohesionStrength = cohesionStrength;
+        this.separationStrength = separationStrength;
+        this.alignRadius = alignRadius;
+        this.cohesionRadius = cohesionRadius;
+        this.separationRadius = separationRadius;
+        this.maxEnergy = maxEnergy;
+        this.maxSpeed = maxSpeed;
     }
 
     varyColour(baseColour) {
@@ -35,45 +43,59 @@ class Boid {
     }
 
     flock(boids) {
-        this.acceleration.add(this.align(boids).mult(AlignConstant));
-        this.acceleration.add(this.separate(boids).mult(SeparationConstant));
-        this.acceleration.add(this.cohere(boids).mult(CohesionConstant));
+        this.acceleration.add(this.align(boids).mult(this.alignStrength));
+        this.acceleration.add(this.separate(boids).mult(this.separationStrength));
+        this.acceleration.add(this.cohere(boids).mult(this.cohesionStrength));
+    }
+
+    cohere(boids) {
+        let cohesiveVector = createVector();
+        let neighbourCount = 0;
+        for (let boid of boids) {
+            if (p5.Vector.dist(this.position, boid.position) < this.cohesionRadius && this != boid) {
+                cohesiveVector.add(boid.position);
+                neighbourCount++;
+            }
+        }
+        if (neighbourCount > 0) {
+            cohesiveVector.div(neighbourCount);
+            cohesiveVector.sub(this.position);
+            cohesiveVector.setMag(this.maxSpeed);
+            cohesiveVector.sub(this.velocity);
+            cohesiveVector.limit(this.maxEnergy);
+        }
+        return cohesiveVector;
     }
 
     align(boids) {
-        let radius = 24;
         let alignmentVector = createVector();
         let neighbourCount = 0;
 
         for (let boid of boids) {
             let distance = p5.Vector.dist(boid.position, this.position);
-            if (boid != this && distance < radius) {
+            if (boid != this && distance < this.alignRadius) {
                 alignmentVector.add(boid.velocity);
                 neighbourCount++;
             }
         }
 
         if (neighbourCount > 0) {
-            //Find average of all velocities
             alignmentVector.div(neighbourCount);
-
-            // Set magnitude to max speed
-            alignmentVector.setMag(maxSpeed);
+            alignmentVector.setMag(this.maxSpeed);
             alignmentVector.sub(this.velocity);
-            alignmentVector.limit(maxEnergy);
+            alignmentVector.limit(this.maxEnergy);
         }
 
         return alignmentVector;
     }
 
     separate(boids) {
-        let radius = 25;
         let separationVector = createVector();
         let neighbourCount = 0;
 
         for (let boid of boids) {
             let displacement = p5.Vector.sub(this.position, boid.position);
-            if (boid != this && displacement.mag() < radius) {
+            if (boid != this && displacement.mag() < this.separationRadius) {
                 separationVector.add(displacement.div(displacement.mag() ** 2));
                 neighbourCount++;
             }
@@ -81,39 +103,18 @@ class Boid {
 
         if (neighbourCount > 0) {
             separationVector.div(neighbourCount);
-            separationVector.setMag(maxSpeed);
+            separationVector.setMag(this.maxSpeed);
             separationVector.sub(this.velocity);
-            separationVector.limit(maxEnergy);
+            separationVector.limit(this.maxEnergy);
         }
 
         return separationVector;
     }
 
-    cohere(boids) {
-        let cohereRadius = 100;
-        let cohesiveVector = createVector();
-        let neighbourCount = 0;
-        for (let boid of boids) {
-            if (p5.Vector.dist(this.position, boid.position) < cohereRadius && this != boid) {
-                cohesiveVector.add(boid.position);
-                neighbourCount++;
-            }
-        }
-        if (neighbourCount > 0) {
-
-            cohesiveVector.div(neighbourCount);
-            cohesiveVector.sub(this.position);
-            cohesiveVector.setMag(maxSpeed);
-            cohesiveVector.sub(this.velocity);
-            cohesiveVector.limit(maxEnergy);
-        }
-        return cohesiveVector;
-    }
-
     move() {
         this.position.add(this.velocity);
         this.velocity.add(this.acceleration);
-        this.velocity.limit(maxSpeed);
+        this.velocity.limit(this.maxSpeed);
         this.acceleration.mult(0);
     }
 
