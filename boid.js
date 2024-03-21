@@ -1,6 +1,3 @@
-// const maxEnergy = 0.2;
-// const maxSpeed = 5;
-
 const AlignConstant = 1.5;
 const CohesionConstant = 1;
 const SeparationConstant = 2;

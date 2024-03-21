@@ -4,8 +4,6 @@ function setup() {
     let container = createCanvas(600, 600);
     container.parent('container');
 
-    
-
     let cohereStrSlider = document.getElementById("cohereStrength");
     cohereStrSlider.oninput = function() {updateCohStrength(cohereStrSlider.value);}
 
@@ -31,9 +29,10 @@ function setup() {
     energySlider.oninput = function() {updateE(energySlider.value);}
 
     let boidCountSlider = document.getElementById("boidCountSlider");
-    boidCountSlider.oninput = function() {doSetupActions(boidCountSlider.value, cohereStrSlider.value, alignStrSlider.value, separateStrSlider.value, cohereRadSlider.value, alignRadSlider.value, separateRadSlider.value, 5, 0.2);}
-
-    doSetupActions(50, 1, 1.5, 2, 50, 25, 25, 5, 0.2);
+    boidCountSlider.oninput = function() {
+        doSetupActions(parseInt(boidCountSlider.value), parseFloat(cohereStrSlider.value), parseFloat(alignStrSlider.value), parseFloat(separateStrSlider.value), parseInt(cohereRadSlider.value), parseInt(alignRadSlider.value), parseInt(separateRadSlider.value), parseFloat(speedSlider.value), parseFloat(energySlider.value));
+    }
+    doSetupActions(parseInt(boidCountSlider.value), parseFloat(cohereStrSlider.value), parseFloat(alignStrSlider.value), parseFloat(separateStrSlider.value), parseInt(cohereRadSlider.value), parseInt(alignRadSlider.value), parseInt(separateRadSlider.value), parseFloat(speedSlider.value), parseFloat(energySlider.value));
 }
 
 function doSetupActions(boidCount, cohereStr, alignStr, sepStr, cohereRad, alignRad, sepRad, maxV, maxE) {
@@ -45,49 +44,49 @@ function doSetupActions(boidCount, cohereStr, alignStr, sepStr, cohereRad, align
 
 function updateCohRad(newCohRad) {
     for (let boid of boids) {
-        boid.cohesionRadius = newCohRad;
+        boid.cohesionRadius = parseInt(newCohRad);
     }
 }
 
 function updateAliRad(newAliRad) {
     for (let boid of boids) {
-        boid.alignRadius = newAliRad;
+        boid.alignRadius = parseInt(newAliRad);
     }
 }
 
 function updateSepRad(newSepRad) {
     for (let boid of boids) {
-        boid.separationRadius = newSepRad;
+        boid.separationRadius = parseInt(newSepRad);
     }
 }
 
 function updateSepStrength(newStrength) {
     for (let boid of boids) {
-        boid.separationStrength = parseInt(newStrength);
+        boid.separationStrength = parseFloat(newStrength);
     }
 }
 
 function updateCohStrength(newStrength) {
     for (let boid of boids) {
-        boid.cohesionStrength = parseInt(newStrength);
+        boid.cohesionStrength = parseFloat(newStrength);
     }
 }
 
 function updateAliStrength(newStrength) {
     for (let boid of boids) {
-        boid.alignStrength = parseInt(newStrength);
+        boid.alignStrength = parseFloat(newStrength);
     }
 }
 
 function updateV(newV) {
     for (let boid of boids) {
-        boid.maxSpeed = parseInt(newV);
+        boid.maxSpeed = parseFloat(newV);
     }
 }
 
 function updateE(newE) {
     for (let boid of boids) {
-        boid.maxEnergy = parseInt(newE);
+        boid.maxEnergy = parseFloat(newE);
     }
 }
 
